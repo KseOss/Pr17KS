@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Linq;
 
 namespace Pr17KS
 {
@@ -30,9 +31,47 @@ namespace Pr17KS
         }
         private void AddStudent_Click(object sender, RoutedEventArgs e)
         {
-            
+            var addWindow = new AddEditStudentWindow(new Student());
+            if (addWindow.ShowDialog() == true)
+            {
+                exam.Students.Add(addWindow.Student);
+                exam.SaveChanges();
+                LoadStudents();
+            }
         }
 
+        private void EditStudent_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudent = dgStudents.SelectedItem as Student;
+            if (selectedStudent == null)
+            {
+                MessageBox.Show("Выберите студента для редактирования.");
+                return;
+            }
 
+            var editWindow = new AddEditStudentWindow(selectedStudent);
+            if (editWindow.ShowDialog() == true)
+            {
+                exam.SaveChanges();
+                LoadStudents();
+            }
+        }
+
+        private void DeleteStudent_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedStudent = dgStudents.SelectedItem as Student;
+            if (selectedStudent == null)
+            {
+                MessageBox.Show("Выберите студента для удаления.");
+                return;
+            }
+
+            if (MessageBox.Show("Вы уверены, что хотите удалить студента?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                exam.Students.Remove(selectedStudent);
+                exam.SaveChanges();
+                LoadStudents();
+            }
+        }
     }
 }
