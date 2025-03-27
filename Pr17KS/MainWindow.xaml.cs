@@ -1,4 +1,4 @@
-﻿using Pr17KS.Models;
+using Pr17KS.Models;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,10 +31,10 @@ namespace Pr17KS
         }
         private void AddStudent_Click(object sender, RoutedEventArgs e)
         {
-            var addWindow = new AddEditStudentWindow(new Student());
+            var addWindow = new AddEditStudentWindow(new SessionsResult());
             if (addWindow.ShowDialog() == true)
             {
-                exam.Students.Add(addWindow.Student);
+                exam.SessionsResults.Add(addWindow.Student);
                 exam.SaveChanges();
                 LoadStudents();
             }
@@ -42,7 +42,7 @@ namespace Pr17KS
 
         private void EditStudent_Click(object sender, RoutedEventArgs e)
         {
-            var selectedStudent = dgStudents.SelectedItem as Student;
+            var selectedStudent = dgStudents.SelectedItem as SessionsResult;
             if (selectedStudent == null)
             {
                 MessageBox.Show("Выберите студента для редактирования.");
@@ -59,7 +59,7 @@ namespace Pr17KS
 
         private void DeleteStudent_Click(object sender, RoutedEventArgs e)
         {
-            var selectedStudent = dgStudents.SelectedItem as Student;
+            var selectedStudent = dgStudents.SelectedItem as SessionsResult;
             if (selectedStudent == null)
             {
                 MessageBox.Show("Выберите студента для удаления.");
@@ -68,10 +68,69 @@ namespace Pr17KS
 
             if (MessageBox.Show("Вы уверены, что хотите удалить студента?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                exam.Students.Remove(selectedStudent);
+                exam.SessionsResults.Remove(selectedStudent);
                 exam.SaveChanges();
                 LoadStudents();
             }
+        }
+        private void SortStudents_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedCriteriy = cmbSort.SelectedItem as ComboBoxItem;
+            if (selectedCriteriy == null)
+            {
+                MessageBox.Show("Выберите критерий сортировки.");
+                return;
+            }
+            IEnumerable<SessionsResult> sortedStudents;
+            switch (selectedCriteriy.Content.ToString())
+            {
+                case "По фамилии":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.LastName);
+                    break;
+                case "По имени":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.FirstName);
+                    break;
+                case "По оценке по математике":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.Math);
+                    break;
+                case "По оценке по русскому":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.Rus);
+                    break;
+                case "По оценке по английскому":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.Eng);
+                    break;
+                case "По оценке по физике":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.Phys);
+                    break;
+                case "По оценке по информатике":
+                    sortedStudents = exam.SessionsResults.OrderBy(s => s.Inf);
+                    break;
+                default:
+                    MessageBox.Show("Неизвестный критерий сортировки.");
+                    return;
+            }
+            dgStudents.ItemsSource = sortedStudents.ToList();
+        }
+        private void ResetSort_Click(object sender, EventArgs e)
+        {
+            LoadStudents();
+        }
+        private void SearchStudenrs_Click(object sender, EventArgs e)
+        {
+            string searchQuery = txtSearch.Text.Trim().ToLower();
+            if (string.IsNullOrEmpty(searchQuery))
+            {
+                MessageBox.Show("Введите текст для поиска.");
+                return;
+            }
+
+            var filterStudents = exam.SessionsResults.Where(s => s.LastName.ToLower().Contains(searchQuery) || s.FirstName.ToLower().Contains(searchQuery) || 
+            s.GroupIndex.ToLower().Contains(searchQuery) || s.MaritalStatus.ToLower().Contains(searchQuery) || s.MiddleName.ToLower().Contains(searchQuery)).ToList();
+        }
+        private void ClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+            LoadStudents();
         }
     }
 }
