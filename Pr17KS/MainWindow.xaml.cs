@@ -115,7 +115,7 @@ namespace Pr17KS
         {
             LoadStudents();
         }
-        private void SearchStudenrs_Click(object sender, EventArgs e)
+        private void SearchStudents_Click(object sender, EventArgs e)
         {
             string searchQuery = txtSearch.Text.Trim().ToLower();
             if (string.IsNullOrEmpty(searchQuery))
@@ -125,12 +125,16 @@ namespace Pr17KS
             }
 
             var filterStudents = exam.SessionsResults.Where(s => s.LastName.ToLower().Contains(searchQuery) || s.FirstName.ToLower().Contains(searchQuery) || 
-            s.GroupIndex.ToLower().Contains(searchQuery) || s.MaritalStatus.ToLower().Contains(searchQuery) || s.MiddleName.ToLower().Contains(searchQuery)).ToList();
+            s.GroupIndex.ToLower().Contains(searchQuery) || s.MaritalStatus.ToLower().Contains(searchQuery)).ToList();
         }
         private void ClearSearch_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
             LoadStudents();
+        }
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Выполнила программу: Сухомяткина Ксения Игоревна\nГруппа: ИСП-34\n\nЗадание:\nРазработать базу данных с вписыванием студентов", "Справка о программе", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
