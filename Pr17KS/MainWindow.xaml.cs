@@ -116,17 +116,19 @@ namespace Pr17KS
             LoadStudents();
         }
         private void SearchStudents_Click(object sender, EventArgs e)
-        {
-            string searchQuery = txtSearch.Text.Trim().ToLower();
-            if (string.IsNullOrEmpty(searchQuery))
-            {
-                MessageBox.Show("Введите текст для поиска.");
-                return;
-            }
+         {
+             try
+             {
+                 string query = txtSearch.Text.ToLower();
+                 var result = exam.SessionsResults.Where(s => s.FirstName.ToLower().Contains(query) || s.LastName.ToLower().Contains(query)).ToList();
+                 dgStudents.ItemsSource = result;
+             }
+             catch (Exception ex) 
+             {
+                 MessageBox.Show($"Ошибка поиска: {ex.Message}");
+             }
 
-            var filterStudents = exam.SessionsResults.Where(s => s.LastName.ToLower().Contains(searchQuery) || s.FirstName.ToLower().Contains(searchQuery) || 
-            s.GroupIndex.ToLower().Contains(searchQuery) || s.MaritalStatus.ToLower().Contains(searchQuery)).ToList();
-        }
+         }
         private void ClearSearch_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
